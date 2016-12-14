@@ -20,15 +20,14 @@ public class CalculadoraDePrecos {
 		switch (tipo) {
 		case CINEMA:
 		case SHOW:
-			//quando estiver acabando os ingressos... 
 			precoTotal = new PrecoAdicionalUltimosIngrecos().calculaPreco(totalIngressos, ingressosReservados,
-					preco, 0.05, 0.10);
+					preco);
 			break;
 			
 		case BALLET:
 		case ORQUESTRA:
 			precoTotal = new PrecoAdicionalPorDuracao().calculaPreco(sessao, totalIngressos,
-					ingressosReservados, preco, 0.50, 0.20);
+					ingressosReservados, preco);
 			break;
 			
 		default:
