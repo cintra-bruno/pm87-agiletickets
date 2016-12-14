@@ -12,12 +12,11 @@ public class CalculadoraDePrecos {
 	public static BigDecimal calcula(Sessao sessao, Integer quantidade) {
 		BigDecimal precoTotal;
 		
-		TipoDeEspetaculo tipo = sessao.getEspetaculo().getTipo();
 		Integer totalIngressos = sessao.getTotalIngressos();
 		Integer ingressosReservados = sessao.getIngressosReservados();
 		BigDecimal preco = sessao.getPreco();
 
-		switch (tipo) {
+		switch (sessao.getEspetaculo().getTipo()) {
 		case CINEMA:
 		case SHOW:
 			precoTotal = new PrecoAdicionalUltimosIngrecos().calculaPreco(totalIngressos, ingressosReservados,

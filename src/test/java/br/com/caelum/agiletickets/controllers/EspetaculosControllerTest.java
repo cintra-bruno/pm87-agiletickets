@@ -1,7 +1,17 @@
 package br.com.caelum.agiletickets.controllers;
 
-import java.math.BigDecimal;
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.joda.time.LocalTime;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -11,6 +21,7 @@ import org.mockito.Spy;
 import br.com.caelum.agiletickets.domain.Agenda;
 import br.com.caelum.agiletickets.domain.DiretorioDeEstabelecimentos;
 import br.com.caelum.agiletickets.models.Espetaculo;
+import br.com.caelum.agiletickets.models.Periodicidade;
 import br.com.caelum.agiletickets.models.Sessao;
 import br.com.caelum.agiletickets.models.TipoDeEspetaculo;
 import br.com.caelum.vraptor.Result;
@@ -18,13 +29,6 @@ import br.com.caelum.vraptor.util.test.MockResult;
 import br.com.caelum.vraptor.util.test.MockValidator;
 import br.com.caelum.vraptor.validator.ValidationException;
 import br.com.caelum.vraptor.validator.Validator;
-import static org.hamcrest.Matchers.is;
-
-import static org.junit.Assert.assertThat;
-
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
 
 public class EspetaculosControllerTest {
 
@@ -119,4 +123,102 @@ public class EspetaculosControllerTest {
 		assertThat(sessao.getIngressosDisponiveis(), is(2));
 	}
 
+	@Test
+	public void deveCadastrarUmaUnicaSessaoQuandoInicioEFimForemIguais() throws Exception {
+		
+		Espetaculo espetaculo = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate(2016,12,14);
+		LocalDate fim = new LocalDate(2016,12,14);
+		LocalTime horario = new LocalTime(21,0);
+		Periodicidade periodicidade = Periodicidade.DIARIA;
+		
+		List<Sessao> sessoes = espetaculo.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		Assert.assertNotNull(sessoes);
+		Assert.assertEquals(1, sessoes.size());
+		
+		Sessao sessao = sessoes.get(0);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("14/12/16", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+	}
+	
+	@Test
+	public void deveCadastrarTresSessoesSemanaisQuandoInicioEFimTiveremTresSemanasDeDiferenca() throws Exception {
+		
+		Espetaculo espetaculo = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate(2016,12,14);
+		LocalDate fim = new LocalDate(2016,12,30);
+		LocalTime horario = new LocalTime(21,0);
+		Periodicidade periodicidade = Periodicidade.SEMANAL;
+		
+		List<Sessao> sessoes = espetaculo.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		Assert.assertNotNull(sessoes);
+		Assert.assertEquals(3, sessoes.size());
+		
+		Sessao sessao = sessoes.get(0);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("14/12/16", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+		
+		sessao = sessoes.get(1);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("21/12/16", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+		
+		sessao = sessoes.get(2);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("28/12/16", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+		
+	}
+	
+	@Test
+	public void deveCadastrarTresSessoesDiariasQuandoInicioEFimTiveremTresDiasDeDiferenca() throws Exception {
+		
+		Espetaculo espetaculo = new Espetaculo();
+		
+		LocalDate inicio = new LocalDate(2016,12,30);
+		LocalDate fim = new LocalDate(2017,01,01);
+		LocalTime horario = new LocalTime(21,0);
+		Periodicidade periodicidade = Periodicidade.DIARIA;
+		
+		List<Sessao> sessoes = espetaculo.criaSessoes(inicio, fim, horario, periodicidade);
+		
+		Assert.assertNotNull(sessoes);
+		Assert.assertEquals(3, sessoes.size());
+		
+		Sessao sessao = sessoes.get(0);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("30/12/16", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+		
+		sessao = sessoes.get(1);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("31/12/16", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+		
+		sessao = sessoes.get(2);
+		
+		Assert.assertEquals(BigDecimal.TEN, sessao.getPreco());
+		Assert.assertEquals("01/01/17", sessao.getDia());
+		Assert.assertEquals("21:00", sessao.getHora());
+		Assert.assertEquals(espetaculo, sessao.getEspetaculo());
+		
+	}
 }
