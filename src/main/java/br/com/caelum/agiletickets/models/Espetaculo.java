@@ -103,11 +103,14 @@ public class Espetaculo {
 	public List<Sessao> criaSessoes(LocalDate inicio, LocalDate fim, LocalTime horario, Periodicidade periodicidade) {
 		
 		int qtdSessoes = 0;
+		int diasEntreSessoes = 0;
 		
 		if(periodicidade.equals(Periodicidade.SEMANAL)){
 			qtdSessoes = Weeks.weeksBetween(inicio, fim).getWeeks();
+			diasEntreSessoes = 7;
 		} else {
 			qtdSessoes = Days.daysBetween(inicio, fim).getDays();
+			diasEntreSessoes = 1;
 		}
 		
 		List<Sessao> sessoes = new ArrayList<Sessao>();
@@ -121,13 +124,8 @@ public class Espetaculo {
 			sessao.setIngressosReservados(0);
 			sessoes.add(sessao);
 			
-			if(periodicidade.equals(Periodicidade.SEMANAL)){
-				inicio = inicio.plusDays(7);
-			} else {
-				inicio = inicio.plusDays(1);
-			}
+			inicio = inicio.plusDays(diasEntreSessoes);
 		}
-		// ALUNO: Não apague esse metodo. Esse sim será usado no futuro! ;)
 		return sessoes;
 	}
 	
